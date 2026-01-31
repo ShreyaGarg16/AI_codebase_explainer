@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from backend.api.health import router as health_router
 from backend.api.ingest import router as ingest_router
+from backend.api.ask import router as ask_router
 
 app = FastAPI()
 app.include_router(health_router)
 app.include_router(ingest_router)
+app.include_router(ask_router)
 
 @app.get("/")
 def root():
