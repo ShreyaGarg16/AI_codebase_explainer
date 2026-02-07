@@ -1,0 +1,147 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #0f0b0c; /* dark background */
+  color: #f5daa7;
+}
+
+/* CENTER EVERYTHING */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* NAVBAR */
+.navbar {
+  width: 100%;
+  padding-left: 24px ;
+  padding-right: 24px;
+  text-align: center;
+  border-bottom: 1px solid #2a1c20;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #f5daa7;
+  font-weight: 700;
+}
+
+/* HERO */
+.hero {
+  width:100%;
+  text-align: center;
+  padding: 100px 0 100px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #f5daa7;
+  opacity: 0.9;
+}
+
+/* IDEAS */
+.ideas {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.idea {
+  background: rgba(132, 42, 59, 0.15);
+  border: 1px solid #842a3b;
+  padding: 20px 20px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+
+}
+
+/* TRY BOX */
+.try-box {
+  padding:0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.try-card {
+  width: 100%;
+ 
+  background: rgba(132, 42, 59, 0.18);
+  border: 1px solid #842a3b;
+  border-radius: 20px;
+  padding: 50px;
+}
+
+/* FORM */
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #842a3b;
+  background: #0f0b0c;
+  color: #f5daa7;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 30px;
+  width: 100%;
+  padding: 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 14px;
+  border: none;
+  background: #842a3b;
+  color: #f5daa7;
+  cursor: pointer;
+}
+
+/* ANSWER */
+.answer {
+  margin-top: 40px;
+  padding: 30px;
+  border-radius: 18px;
+  background: #0f0b0c;
+  border: 1px solid #a3485a;
+}
+
+.answer h3 {
+  margin-top: 0;
+  color: #f5daa7;
+}
+
+pre {
+  margin-top: 15px;
+  white-space: pre-wrap;
+  font-family: Consolas, monospace;
+  background: rgba(163, 72, 90, 0.15);
+  padding: 20px;
+  border-radius: 14px;
+  color: #f5daa7;
+}
+.container {
+  width: 100%;
+  margin-left:  auto;   
+  margin-right:auto;   /* ← THIS is the key */
+  padding-left: 24px;
+  padding-right:24px;
+}
+

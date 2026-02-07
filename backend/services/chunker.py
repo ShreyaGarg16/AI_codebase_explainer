@@ -11,7 +11,7 @@ def chunk_code(files: List[Dict]):
     chunks = []
 
     for file in files:
-        content = file["content"]
+        content = file["text"]
         file_path = file["file_path"]
 
         start = 0

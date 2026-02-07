@@ -1,46 +1,120 @@
-from backend.services.vectorstore import VectorStore
-
-# 🔒 FINAL SWITCH
-LOCAL_MODE = True  # keep True for now (stable + offline)
-
+"""from backend.services.vectorstore import get_vectorstore
 
 def answer_question(chunks, question):
-    """
-    Hybrid RAG:
-    - Local mode: context-based deterministic answer
-    - LLM mode: plug OpenAI later without changing API
-    """
+    if not chunks:
+        return "No code files found."
+
+    vectorstore = get_vectorstore(chunks)
+    relevant_chunks = vectorstore.search(question)
+
+    answer = "Based on the codebase:\n\n"
+
+    for c in relevant_chunks:
+        answer += f"File: {c['file_path']}\n"
+        answer += c["text"][:800]  # avoid dumping huge files
+        answer += "\n\n"
+
+    return answer
+
+from backend.services.vectorstore import VectorStore
+from backend.services.llm import call_llm
+
+def answer_question(chunks, question):
+    if not chunks:
+        return "No code files were found."
 
     vectorstore = VectorStore(chunks)
-    relevant_chunks = vectorstore.search(question, top_k=5)
+    relevant_chunks = vectorstore.search(question, top_k=1)
 
     context = "\n\n".join(
-        [f"File: {c['file_path']}\n{c['text']}" for c in relevant_chunks]
+        f"File: {c['file_path']}\n{c['text'][:300]}"
+        for c in relevant_chunks
     )
 
-    if LOCAL_MODE:
-        return local_reasoning(context, question)
+    prompt = f
+You are a codebase explainer.
 
-    else:
-        # 🔌 Future: OpenAI / Gemini goes here
-        raise NotImplementedError("LLM mode not enabled yet")
+Answer the question using ONLY the context below.
 
+CONTEXT:
+{context}
 
-def local_reasoning(context, question):
-    """
-    Deterministic reasoning for code explanation & debugging
-    """
-
-    response = f"""
 QUESTION:
 {question}
 
-RELEVANT CODE CONTEXT:
+Give a clear, short answer.
+
+
+    return {
+        "answer": call_llm(prompt),
+        "source": context
+    }
+"""
+from backend.services.llm import call_llm
+
+
+def answer_question(chunks, question: str):
+    """
+    Simple and stable RAG:
+    1. Find relevant chunks using keyword match
+    2. Build a short context
+    3. Ask LLM using that context
+    """
+
+    if not chunks:
+        return {
+            "error": "No code chunks available. Please ingest a repository first."
+        }
+
+    question_lower = question.lower()
+    relevant = []
+
+    # --- Step 1: naive but reliable retrieval ---
+    for c in chunks:
+        if question_lower in c["text"].lower():
+            relevant.append(c)
+
+    # fallback: take first few chunks if nothing matched
+    if not relevant:
+        relevant = chunks[:3]
+
+    # --- Step 2: build context ---
+    context_parts = []
+    for c in relevant[:3]:
+        context_parts.append(
+            f"File: {c['file_path']}\n{c['text'][:300]}"
+        )
+
+    context = "\n\n".join(context_parts)
+
+    prompt = f"""
+You are a codebase explainer.
+
+Answer the question using ONLY the code context below.
+
+CODE CONTEXT:
 {context}
 
-EXPLANATION:
-The above files and code sections are most relevant to your question.
-Review how functions, imports, and APIs interact in these files.
+QUESTION:
+{question}
+
+Give a clear and concise answer.
 """
 
-    return response.strip()
+    # --- Step 3: call LLM (Ollama / later API) ---
+    try:
+        answer = call_llm(prompt)
+    except Exception as e:
+        # LLM fallback (VERY important for stability)
+        return {
+            "question": question,
+            "answer": "LLM not available. Showing relevant code instead.",
+            "source": context,
+            "error": str(e)
+        }
+
+    return {
+        "question": question,
+        "answer": answer,
+        "source": context
+    }
